@@ -1,4 +1,5 @@
 import json
+import json5
 from typing import Any, Dict, List, Type, Union
 
 from pydantic import BaseModel, root_validator
@@ -79,7 +80,10 @@ class PydanticOutputFunctionsParser(OutputFunctionsParser):
     def parse_result(self, result: List[Generation]) -> Any:
         _result = super().parse_result(result)
         if self.args_only:
-            pydantic_args = self.pydantic_schema.parse_raw(_result)  # type: ignore
+            _parsed_result = json5.loads(_result)
+            _cleaned_result = json.dumps(_parsed_result)
+
+            pydantic_args = self.pydantic_schema.parse_raw(_cleaned_result)  # type: ignore
         else:
             fn_name = _result["name"]
             _args = _result["arguments"]
