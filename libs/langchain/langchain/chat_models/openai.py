@@ -78,6 +78,7 @@ def _create_retry_decorator(llm: ChatOpenAI) -> Callable[[Any], Any]:
             | retry_if_exception_type(openai.error.APIConnectionError)
             | retry_if_exception_type(openai.error.RateLimitError)
             | retry_if_exception_type(openai.error.ServiceUnavailableError)
+            | retry_if_exception_type(ValueError)
         ),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
